@@ -6,9 +6,9 @@ package io.homo.efficio.scratchpad.oauth10a.consumer.util;
  */
 public interface OAuthConstants {
 
-    String HTTP_METHOD_POST = "POST";
-
     String OAUTH_CONSUMER_KEY = "oauth_consumer_key";
+
+    String OAUTH_CALLBACK = "oauth_callback";
 
     String OAUTH_NONCE = "oauth_nonce";
 
@@ -24,7 +24,7 @@ public interface OAuthConstants {
 
     String VERSION_1_0 = "1.0";
 
-    String OAUTH_SIGNATURE_METHOD_HMAC_SHA1 = "HMAC_SHA1";
+    String OAUTH_SIGNATURE_METHOD_HMAC_SHA1 = "HMAC-SHA1";
 
     String HMAC_SHA1_ALGORITHM_NAME = "HmacSHA1";
 }

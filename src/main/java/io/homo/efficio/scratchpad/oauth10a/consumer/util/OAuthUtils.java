@@ -25,14 +25,16 @@ public class OAuthUtils {
     public static String generateSignature(TemporaryCredentialsRequestHeader tcHeader, String consumerSecret, String tokenSecret) {
         String key = getUrlEncoded(consumerSecret) + "&" + getUrlEncoded(tokenSecret);
         String baseString = generateBaseString(tcHeader);
-        final SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), OAuthConstants.HMAC_SHA1_ALGORITHM_NAME);
         try {
+            final SecretKeySpec signingKey = new SecretKeySpec(key.getBytes("UTF-8"), OAuthConstants.HMAC_SHA1_ALGORITHM_NAME);
             final Mac mac = Mac.getInstance(OAuthConstants.HMAC_SHA1_ALGORITHM_NAME);
             mac.init(signingKey);
-            return Base64.getEncoder().encodeToString(mac.doFinal(baseString.getBytes()));
+            return Base64.getEncoder().encodeToString(mac.doFinal(baseString.getBytes("UTF-8")));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -51,14 +53,7 @@ public class OAuthUtils {
     }
 
     private static String getBaseStringUri(TemporaryCredentialsRequestHeader tcHeader) {
-        String scheme = tcHeader.getScheme();
-        String lowercaseServerName = tcHeader.getServerName().trim().toLowerCase();
-        int serverPort = tcHeader.getServerPort();
-        String requestUri = tcHeader.getRequestUri();
-
-        return serverPort == 80
-                ? scheme + "://" + lowercaseServerName + requestUri
-                : scheme + "://" + lowercaseServerName + ":" + serverPort + requestUri;
+        return tcHeader.getTemporaryCredentialsUrl();
     }
 
     private static String getRequestParameters(TemporaryCredentialsRequestHeader tcHeader) {
@@ -75,6 +70,8 @@ public class OAuthUtils {
         putMultiValue(paramSources, OAuthConstants.OAUTH_SIGNATURE_METHOD, tcHeader.getOauthSignatureMethod());
         putMultiValue(paramSources, OAuthConstants.OAUTH_TIMESTAMP, tcHeader.getOauthTimestamp());
         putMultiValue(paramSources, OAuthConstants.OAUTH_NONCE, tcHeader.getOauthNonce());
+        putMultiValue(paramSources, OAuthConstants.OAUTH_CALLBACK, tcHeader.getOauthCallbackUrl());
+        putMultiValue(paramSources, OAuthConstants.OAUTH_VERSION, tcHeader.getOauthVersion());
 
         final String requestBody = tcHeader.getRequestBody();
         kvToMultiValueMap(paramSources, requestBody);
@@ -126,7 +123,7 @@ public class OAuthUtils {
         return sb.toString().substring(1);
     }
 
-    private static String getUrlDecoded(String encoded) {
+    public static String getUrlDecoded(String encoded) {
         try {
             return URLDecoder.decode(encoded, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -134,7 +131,7 @@ public class OAuthUtils {
         }
     }
 
-    private static String getUrlEncoded(String decoded) {
+    public static String getUrlEncoded(String decoded) {
         try {
             return URLEncoder.encode(decoded, "UTF-8")
                     .replaceAll("\\+", "%20")
