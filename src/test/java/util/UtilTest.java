@@ -1,13 +1,12 @@
 package util;
 
-import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuthConstants;
+import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -114,11 +113,11 @@ public class UtilTest {
         final String queryString = "b5=%3D%253D&a3=a&c%40=&a2=r%20b";
         kvToMultiValueMap(paramSources, queryString);
 
-        putMultiValue(paramSources, OAuthConstants.OAUTH_CONSUMER_KEY, "9djdj82h48djs9d2");
-        putMultiValue(paramSources, OAuthConstants.OAUTH_TOKEN, "kkk9d7dh3k39sjv7");
-        putMultiValue(paramSources, OAuthConstants.OAUTH_SIGNATURE_METHOD, "HMAC-SHA1");
-        putMultiValue(paramSources, OAuthConstants.OAUTH_TIMESTAMP, "137131201");
-        putMultiValue(paramSources, OAuthConstants.OAUTH_NONCE, "7d8f3e4a");
+        putMultiValue(paramSources, OAuth10aConstants.OAUTH_CONSUMER_KEY, "9djdj82h48djs9d2");
+        putMultiValue(paramSources, OAuth10aConstants.OAUTH_TOKEN, "kkk9d7dh3k39sjv7");
+        putMultiValue(paramSources, OAuth10aConstants.OAUTH_SIGNATURE_METHOD, "HMAC-SHA1");
+        putMultiValue(paramSources, OAuth10aConstants.OAUTH_TIMESTAMP, "137131201");
+        putMultiValue(paramSources, OAuth10aConstants.OAUTH_NONCE, "7d8f3e4a");
 
         final String requestBody = "c2&a3=2+q";
         kvToMultiValueMap(paramSources, requestBody);

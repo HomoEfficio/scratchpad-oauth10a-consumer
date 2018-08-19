@@ -1,4 +1,4 @@
-package io.homo.efficio.scratchpad.oauth10a.consumer.util;
+package io.homo.efficio.scratchpad.oauth10a.consumer.exception;
 
 /**
  * @author homo.efficio@gmail.com

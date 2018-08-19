@@ -4,7 +4,7 @@ package io.homo.efficio.scratchpad.oauth10a.consumer.util;
  * @author homo.efficio@gmail.com
  * Created on 2018-08-18.
  */
-public interface OAuthConstants {
+public interface OAuth10aConstants {
 
     String OAUTH_CONSUMER_KEY = "oauth_consumer_key";
 

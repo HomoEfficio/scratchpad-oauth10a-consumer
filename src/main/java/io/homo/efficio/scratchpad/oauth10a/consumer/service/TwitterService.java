@@ -1,10 +1,9 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.service;
 
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentials;
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.OAuthRequestHeader;
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TokenCredentials;
-import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aException;
-import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuthUtils;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.AbstractOAuth10aCredentials;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.AbstractOAuthRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.exception.OAuth10aException;
+import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aSupport;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author homo.efficio@gmail.com
@@ -32,45 +33,42 @@ public class TwitterService {
     @NonNull
     private RestTemplate restTemplate;
 
-    public ResponseEntity<TemporaryCredentials> getTemporaryCredentials(OAuthRequestHeader rtHeader) {
+    @NonNull
+    private OAuth10aSupport oAuth10aSupport;
+
+    public <T extends AbstractOAuth10aCredentials> ResponseEntity<T> getCredentials(AbstractOAuthRequestHeader oAuthRequestHeader, Class<T> clazz) {
+        this.oAuth10aSupport.fillNonce(oAuthRequestHeader);
+        this.oAuth10aSupport.fillSignature(oAuthRequestHeader);
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", rtHeader.getAuthorizationHeader());
-        log.info("### authorization header: {}", rtHeader.getAuthorizationHeader());
+        httpHeaders.add("Authorization", oAuthRequestHeader.getRequestHeader());
+        log.info("### {} request header: {}", clazz.getSimpleName(), oAuthRequestHeader.getRequestHeader());
         final HttpEntity<String> reqEntity = new HttpEntity<>(httpHeaders);
 
         final ResponseEntity<String> response = this.restTemplate.exchange(
-                this.temporaryCredentialsUrl,
+                oAuthRequestHeader.getCredentialsUrl(),
                 HttpMethod.POST,
                 reqEntity,
                 String.class
         );
 
         if (response.getStatusCode().equals(HttpStatus.OK)) {
-            final TemporaryCredentials temporaryCredentials =
-                    OAuthUtils.getTemporaryCredentialsFrom(response.getBody());
-            return new ResponseEntity<>(temporaryCredentials, HttpStatus.OK);
-        } else {
-            throw new OAuth10aException("Response from Server: " + response.getStatusCode() + " " + response.getBody());
-        }
-    }
 
-    public ResponseEntity<TokenCredentials> getTokenCredentials(OAuthRequestHeader atHeader) {
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", atHeader.getTokenCredentialsHeader());
-        log.info("### authorization header: {}", atHeader.getTokenCredentialsHeader());
-        final HttpEntity<String> reqEntity = new HttpEntity<>(httpHeaders);
+            AbstractOAuth10aCredentials oAuthCredentials = null;
+            try {
+                oAuthCredentials = clazz.getConstructor().newInstance();
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
 
-        final ResponseEntity<String> response = this.restTemplate.exchange(
-                this.tokenCredentialsUrl,
-                HttpMethod.POST,
-                reqEntity,
-                String.class
-        );
-
-        if (response.getStatusCode().equals(HttpStatus.OK)) {
-            final TokenCredentials tokenCredentials =
-                    OAuthUtils.getTokenCredentialsFrom(response.getBody());
-            return new ResponseEntity<>(tokenCredentials, HttpStatus.OK);
+            final T credentials =
+                    (T) this.oAuth10aSupport.getCredentialsFrom(oAuthCredentials, response.getBody());
+            return new ResponseEntity<>(credentials, HttpStatus.OK);
         } else {
             throw new OAuth10aException("Response from Server: " + response.getStatusCode() + " " + response.getBody());
         }
