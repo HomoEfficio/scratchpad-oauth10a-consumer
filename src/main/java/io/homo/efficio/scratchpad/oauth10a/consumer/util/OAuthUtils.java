@@ -1,7 +1,8 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.util;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentials;
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentialsRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.OAuthRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TokenCredentials;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,7 +24,7 @@ public class OAuthUtils {
                 .encodeToString(String.valueOf(UUID.randomUUID()).getBytes());
     }
 
-    public static String generateSignature(TemporaryCredentialsRequestHeader tcHeader, String consumerSecret, String tokenSecret) {
+    public static String generateSignature(OAuthRequestHeader tcHeader, String consumerSecret, String tokenSecret) {
         String key = getUrlEncoded(consumerSecret) + "&" + getUrlEncoded(tokenSecret);
         String baseString = generateBaseString(tcHeader);
         try {
@@ -40,7 +41,7 @@ public class OAuthUtils {
         }
     }
 
-    private static String generateBaseString(TemporaryCredentialsRequestHeader tcHeader) {
+    private static String generateBaseString(OAuthRequestHeader tcHeader) {
         String httpMethod = tcHeader.getHttpMethod();
         String baseUri = getBaseStringUri(tcHeader);
         String requestParameters = getRequestParameters(tcHeader);
@@ -53,15 +54,15 @@ public class OAuthUtils {
         return sb.toString();
     }
 
-    private static String getBaseStringUri(TemporaryCredentialsRequestHeader tcHeader) {
+    private static String getBaseStringUri(OAuthRequestHeader tcHeader) {
         return tcHeader.getTemporaryCredentialsUrl();
     }
 
-    private static String getRequestParameters(TemporaryCredentialsRequestHeader tcHeader) {
+    private static String getRequestParameters(OAuthRequestHeader tcHeader) {
         return getNormalizedParameters(getParameterSources(tcHeader));
     }
 
-    private static Map<String, List<String>> getParameterSources(TemporaryCredentialsRequestHeader tcHeader) {
+    private static Map<String, List<String>> getParameterSources(OAuthRequestHeader tcHeader) {
         final Map<String, List<String>> paramSources = new HashMap<>();
 
         final String queryString = tcHeader.getQueryString();
@@ -158,6 +159,20 @@ public class OAuthUtils {
                 o.setOauthTokenSecret(kv[1]);
             if (OAuthConstants.OAUTH_CALLBACK_CONFIRMED.equals(kv[0].toLowerCase()))
                 o.setOauthCallbackConfirmed(Boolean.valueOf(kv[1]));
+        }
+        return o;
+    }
+
+    public static TokenCredentials getTokenCredentialsFrom(String i) {
+        if (i == null || i.isEmpty()) return null;
+        final TokenCredentials o = new TokenCredentials();
+        String[] elements = i.split("&");
+        for (String element : elements) {
+            String[] kv = element.split("=");
+            if (OAuthConstants.OAUTH_TOKEN.equals(kv[0].toLowerCase()))
+                o.setOauthToken(kv[1]);
+            if (OAuthConstants.OAUTH_TOKEN_SECRET.equals(kv[0].toLowerCase()))
+                o.setOauthTokenSecret(kv[1]);
         }
         return o;
     }

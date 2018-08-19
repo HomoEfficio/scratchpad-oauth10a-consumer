@@ -7,4 +7,4 @@ oauth10a.provider:
 oauth10a.consumer:
   key: 8Y3anpLDzrFEY8a3bHL7NNugL
   secret: HoGAE6K7QuV9dJ6WhWhSSziUnXv12GyF78uZEr0g4YKt1WEIV7
-  callback.url: http://twitter-app.homoefficio.io/oauth/callback
+  callback.url: http://twitter-app.homoefficio.io:8080/oauth/callback

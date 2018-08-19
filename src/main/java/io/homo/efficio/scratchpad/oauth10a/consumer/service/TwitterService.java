@@ -1,7 +1,8 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.service;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentials;
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentialsRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.OAuthRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TokenCredentials;
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aException;
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuthUtils;
 import lombok.NonNull;
@@ -25,13 +26,16 @@ public class TwitterService {
     @Value("${oauth10a.provider.temporary.credentials.url}")
     private String temporaryCredentialsUrl;
 
+    @Value("${oauth10a.provider.token.credentials.url}")
+    private String tokenCredentialsUrl;
+
     @NonNull
     private RestTemplate restTemplate;
 
-    public ResponseEntity<TemporaryCredentials> getTemporaryCredentials(TemporaryCredentialsRequestHeader tcHeader) {
+    public ResponseEntity<TemporaryCredentials> getTemporaryCredentials(OAuthRequestHeader rtHeader) {
         final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", tcHeader.getAuthorizationHeader());
-        log.info("### authorization header: {}", tcHeader.getAuthorizationHeader());
+        httpHeaders.add("Authorization", rtHeader.getAuthorizationHeader());
+        log.info("### authorization header: {}", rtHeader.getAuthorizationHeader());
         final HttpEntity<String> reqEntity = new HttpEntity<>(httpHeaders);
 
         final ResponseEntity<String> response = this.restTemplate.exchange(
@@ -45,6 +49,28 @@ public class TwitterService {
             final TemporaryCredentials temporaryCredentials =
                     OAuthUtils.getTemporaryCredentialsFrom(response.getBody());
             return new ResponseEntity<>(temporaryCredentials, HttpStatus.OK);
+        } else {
+            throw new OAuth10aException("Response from Server: " + response.getStatusCode() + " " + response.getBody());
+        }
+    }
+
+    public ResponseEntity<TokenCredentials> getTokenCredentials(OAuthRequestHeader atHeader) {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", atHeader.getTokenCredentialsHeader());
+        log.info("### authorization header: {}", atHeader.getTokenCredentialsHeader());
+        final HttpEntity<String> reqEntity = new HttpEntity<>(httpHeaders);
+
+        final ResponseEntity<String> response = this.restTemplate.exchange(
+                this.tokenCredentialsUrl,
+                HttpMethod.POST,
+                reqEntity,
+                String.class
+        );
+
+        if (response.getStatusCode().equals(HttpStatus.OK)) {
+            final TokenCredentials tokenCredentials =
+                    OAuthUtils.getTokenCredentialsFrom(response.getBody());
+            return new ResponseEntity<>(tokenCredentials, HttpStatus.OK);
         } else {
             throw new OAuth10aException("Response from Server: " + response.getStatusCode() + " " + response.getBody());
         }

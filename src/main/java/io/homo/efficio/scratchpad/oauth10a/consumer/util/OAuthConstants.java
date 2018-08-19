@@ -24,6 +24,8 @@ public interface OAuthConstants {
 
     String OAUTH_CALLBACK_CONFIRMED = "oauth_callback_confirmed";
 
+    String OAUTH_VERIFIER = "oauth_verifier";
+
     String OAUTH_VERSION = "oauth_version";
 
     String VERSION_1_0 = "1.0";

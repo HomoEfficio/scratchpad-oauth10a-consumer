@@ -13,7 +13,7 @@
     <!--<![endif]-->
 </head>
 <body>
-<form class="pure-form pure-form-stacked" action="/mentions" method="post">
+<form class="pure-form pure-form-stacked" action="/oauth/mentions" method="post">
     <legend>트위터에 남길 글을 써 주세요</legend>
 
     <label for="mention">트윗</label>
