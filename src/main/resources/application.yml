@@ -1,6 +1,6 @@
 oauth10a.provider:
   temporary.credentials.url: https://api.twitter.com/oauth/request_token
-  authrorize.url: https://api.twitter.com/oauth/authorize
+  authorize.url: https://api.twitter.com/oauth/authorize
   token.credentials.url: https://api.twitter.com/oauth/access_token
 
 

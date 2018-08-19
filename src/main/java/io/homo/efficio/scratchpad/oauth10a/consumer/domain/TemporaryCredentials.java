@@ -13,5 +13,5 @@ public class TemporaryCredentials {
 
     private String oauthTokenSecret;
 
-    private String oauthCallbackConfirmed;
+    private boolean oauthCallbackConfirmed;
 }

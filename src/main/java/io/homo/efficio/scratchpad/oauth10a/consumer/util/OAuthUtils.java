@@ -1,5 +1,6 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.util;
 
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentials;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentialsRequestHeader;
 
 import javax.crypto.Mac;
@@ -143,5 +144,21 @@ public class OAuthUtils {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static TemporaryCredentials getTemporaryCredentialsFrom(String i) {
+        if (i == null || i.isEmpty()) return null;
+        final TemporaryCredentials o = new TemporaryCredentials();
+        String[] elements = i.split("&");
+        for (String element : elements) {
+            String[] kv = element.split("=");
+            if (OAuthConstants.OAUTH_TOKEN.equals(kv[0].toLowerCase()))
+                o.setOauthToken(kv[1]);
+            if (OAuthConstants.OAUTH_TOKEN_SECRET.equals(kv[0].toLowerCase()))
+                o.setOauthTokenSecret(kv[1]);
+            if (OAuthConstants.OAUTH_CALLBACK_CONFIRMED.equals(kv[0].toLowerCase()))
+                o.setOauthCallbackConfirmed(Boolean.valueOf(kv[1]));
+        }
+        return o;
     }
 }

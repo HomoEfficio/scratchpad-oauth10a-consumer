@@ -20,6 +20,10 @@ public interface OAuthConstants {
 
     String OAUTH_TOKEN = "oauth_token";
 
+    String OAUTH_TOKEN_SECRET = "oauth_token_secret";
+
+    String OAUTH_CALLBACK_CONFIRMED = "oauth_callback_confirmed";
+
     String OAUTH_VERSION = "oauth_version";
 
     String VERSION_1_0 = "1.0";

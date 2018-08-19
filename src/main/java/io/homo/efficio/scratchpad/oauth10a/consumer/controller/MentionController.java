@@ -1,8 +1,10 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.controller;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.Mention;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentials;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.TemporaryCredentialsRequestHeader;
 import io.homo.efficio.scratchpad.oauth10a.consumer.service.TwitterService;
+import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuthConstants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,9 @@ public class MentionController {
     @Value("${oauth10a.provider.temporary.credentials.url}")
     private String temporaryCredentialsUrl;
 
+    @Value("${oauth10a.provider.authorize.url}")
+    private String authorizeUrl;
+
     @Value("${oauth10a.consumer.key}")
     private String consumerKey;
 
@@ -50,16 +55,14 @@ public class MentionController {
     }
 
     @PostMapping
-    @ResponseBody
+//    @ResponseBody
     public String writeToTwitter(HttpServletRequest request, Mention mention) {
         final TemporaryCredentialsRequestHeader tcHeader =
                 new TemporaryCredentialsRequestHeader(request, this.temporaryCredentialsUrl, this.consumerKey, this.consumerSecret, this.callbackUrl);
-        final ResponseEntity<String> temporaryCredentials =
+        final ResponseEntity<TemporaryCredentials> temporaryCredentials =
                 this.twitterService.getTemporaryCredentials(tcHeader);
-        log.info("###");
-        log.info(temporaryCredentials.toString());
-        log.info("###");
-        return temporaryCredentials.getBody();
-//        return "redirect:" + "https://www.daum.net";
+
+        return "redirect:" + this.authorizeUrl + "?" +
+                OAuthConstants.OAUTH_TOKEN + "=" + temporaryCredentials.getBody().getOauthToken();
     }
 }
