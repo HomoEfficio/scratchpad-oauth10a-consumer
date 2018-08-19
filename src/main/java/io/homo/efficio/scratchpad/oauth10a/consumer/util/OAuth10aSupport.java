@@ -42,10 +42,10 @@ public class OAuth10aSupport {
         }
     }
 
-    private String generateBaseString(AbstractOAuthRequestHeader tcHeader) {
-        String httpMethod = tcHeader.getHttpMethod();
-        String baseUri = getBaseStringUri(tcHeader);
-        String requestParameters = getRequestParameters(tcHeader);
+    private String generateBaseString(AbstractOAuthRequestHeader header) {
+        String httpMethod = header.getHttpMethod();
+        String baseUri = getBaseStringUri(header);
+        String requestParameters = getRequestParameters(header);
 
         final StringBuilder sb = new StringBuilder();
         sb.append(httpMethod)
@@ -55,27 +55,27 @@ public class OAuth10aSupport {
         return sb.toString();
     }
 
-    private String getBaseStringUri(AbstractOAuthRequestHeader tcHeader) {
-        return tcHeader.getCredentialsUrl();
+    private String getBaseStringUri(AbstractOAuthRequestHeader header) {
+        return header.getCredentialsUrl();
     }
 
-    private String getRequestParameters(AbstractOAuthRequestHeader tcHeader) {
-        return getNormalizedParameters(getParameterSources(tcHeader));
+    private String getRequestParameters(AbstractOAuthRequestHeader header) {
+        return getNormalizedParameters(getParameterSources(header));
     }
 
-    private Map<String, List<String>> getParameterSources(AbstractOAuthRequestHeader tcHeader) {
+    private Map<String, List<String>> getParameterSources(AbstractOAuthRequestHeader header) {
         final Map<String, List<String>> paramSources = new HashMap<>();
 
-        final String queryString = tcHeader.getQueryString();
+        final String queryString = header.getQueryString();
         kvToMultiValueMap(paramSources, queryString);
 
-        final Map<String, String> requestHeaderMap = tcHeader.getRequestHeaderMap();
+        final Map<String, String> requestHeaderMap = header.getRequestHeaderMap();
 
         for (Map.Entry<String, String> entry: requestHeaderMap.entrySet()) {
             putMultiValue(paramSources, entry.getKey(), entry.getValue());
         }
 
-        final String requestBody = tcHeader.getRequestBody();
+        final String requestBody = header.getRequestBody();
         kvToMultiValueMap(paramSources, requestBody);
 
         return paramSources;
