@@ -1,4 +1,4 @@
-package io.homo.efficio.scratchpad.oauth10a.consumer.domain;
+package io.homo.efficio.scratchpad.oauth10a.consumer.domain.header;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import lombok.Data;
@@ -15,9 +15,7 @@ import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlE
  * Created on 2018-08-18.
  */
 @Data
-public class OAuth10aTokenCredentialsHeader extends AbstractOAuthRequestHeader {
-
-    private String credentialsUrl;
+public class OAuth10aTokenCredentialsRequestHeader extends AbstractOAuth10aRequestHeader {
 
     private String oauthVerifier;
 
@@ -25,13 +23,13 @@ public class OAuth10aTokenCredentialsHeader extends AbstractOAuthRequestHeader {
 
     private String oauthTokenSecret;
 
-    public OAuth10aTokenCredentialsHeader(HttpServletRequest request,
-                                          String credentialsUrl,
-                                          String oauthConsumerKey,
-                                          String oauthConsumerSecret,
-                                          String oauthToken,
-                                          String oauthTokenSecret,
-                                          String oauthVerifier) {
+    public OAuth10aTokenCredentialsRequestHeader(HttpServletRequest request,
+                                                 String serverUrl,
+                                                 String oauthConsumerKey,
+                                                 String oauthConsumerSecret,
+                                                 String oauthToken,
+                                                 String oauthTokenSecret,
+                                                 String oauthVerifier) {
         this.httpMethod = HttpMethod.POST.toString();
         this.scheme = request.getScheme();
         this.serverName = request.getServerName();
@@ -39,7 +37,7 @@ public class OAuth10aTokenCredentialsHeader extends AbstractOAuthRequestHeader {
         this.queryString = request.getQueryString();
         this.contentType = request.getContentType();
         this.requestBody = getRequestBody(request);
-        this.credentialsUrl = credentialsUrl;
+        this.serverUrl = serverUrl;
         this.oauthConsumerKey = oauthConsumerKey;
         this.oauthConsumerSecret = oauthConsumerSecret;
         this.oauthToken = oauthToken;

@@ -1,4 +1,4 @@
-package io.homo.efficio.scratchpad.oauth10a.consumer.domain;
+package io.homo.efficio.scratchpad.oauth10a.consumer.domain.credentials;
 
 import lombok.Data;
 

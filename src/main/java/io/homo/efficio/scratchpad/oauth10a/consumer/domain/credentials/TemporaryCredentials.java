@@ -1,4 +1,4 @@
-package io.homo.efficio.scratchpad.oauth10a.consumer.domain;
+package io.homo.efficio.scratchpad.oauth10a.consumer.domain.credentials;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import lombok.Data;
@@ -9,13 +9,15 @@ import lombok.NonNull;
  * Created on 2018-08-19.
  */
 @Data
-public class TokenCredentials extends AbstractOAuth10aCredentials {
+public class TemporaryCredentials extends AbstractOAuth10aCredentials {
 
     // underscore name is needed to be bound automatically
 
     private String oauth_token_secret;
 
-    public TokenCredentials(@NonNull String responseBody) {
+    private boolean oauth_callback_confirmed;
+
+    public TemporaryCredentials(@NonNull String responseBody) {
         String[] elements = responseBody.split("&");
         for (String element : elements) {
             String[] kv = element.split("=");
@@ -23,13 +25,16 @@ public class TokenCredentials extends AbstractOAuth10aCredentials {
                 this.setOauth_token(kv[1]);
             if (OAuth10aConstants.OAUTH_TOKEN_SECRET.equals(kv[0].toLowerCase()))
                 this.setOauth_token_secret(kv[1]);
+            if (OAuth10aConstants.OAUTH_CALLBACK_CONFIRMED.equals(kv[0].toLowerCase()))
+                this.setOauth_callback_confirmed(Boolean.valueOf(kv[1]));
         }
     }
 
     @Override
     public String toString() {
-        return "TokenCredentials{" +
+        return "TemporaryCredentials{" +
                 "oauth_token_secret='" + oauth_token_secret + '\'' +
+                ", oauth_callback_confirmed=" + oauth_callback_confirmed +
                 ", oauth_token='" + oauth_token + '\'' +
                 '}';
     }

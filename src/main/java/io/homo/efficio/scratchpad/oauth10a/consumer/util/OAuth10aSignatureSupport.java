@@ -1,6 +1,6 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.util;
 
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.AbstractOAuthRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.AbstractOAuth10aRequestHeader;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
@@ -20,12 +20,12 @@ import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlE
 @Component
 public class OAuth10aSignatureSupport {
 
-    public void fillNonce(AbstractOAuthRequestHeader header) {
+    public void fillNonce(AbstractOAuth10aRequestHeader header) {
         header.setOauthNonce(Base64.getEncoder()
                 .encodeToString(String.valueOf(UUID.randomUUID()).getBytes()));
     }
 
-    public void fillSignature(AbstractOAuthRequestHeader header) {
+    public void fillSignature(AbstractOAuth10aRequestHeader header) {
         String key = header.getKey();
         String baseString = generateBaseString(header);
         try {
@@ -41,7 +41,7 @@ public class OAuth10aSignatureSupport {
         }
     }
 
-    private String generateBaseString(AbstractOAuthRequestHeader header) {
+    private String generateBaseString(AbstractOAuth10aRequestHeader header) {
         String httpMethod = header.getHttpMethod();
         String baseUri = getBaseStringUri(header);
         String requestParameters = getRequestParameters(header);
@@ -54,15 +54,17 @@ public class OAuth10aSignatureSupport {
         return sb.toString();
     }
 
-    private String getBaseStringUri(AbstractOAuthRequestHeader header) {
-        return header.getCredentialsUrl();
+    private String getBaseStringUri(AbstractOAuth10aRequestHeader header) {
+        final String serverUrl = header.getServerUrl();
+        final int qIndex = serverUrl.indexOf('?');
+        return qIndex > 0 ? serverUrl.substring(0, qIndex) : serverUrl;
     }
 
-    private String getRequestParameters(AbstractOAuthRequestHeader header) {
+    private String getRequestParameters(AbstractOAuth10aRequestHeader header) {
         return getNormalizedParameters(getParameterSources(header));
     }
 
-    private Map<String, List<String>> getParameterSources(AbstractOAuthRequestHeader header) {
+    private Map<String, List<String>> getParameterSources(AbstractOAuth10aRequestHeader header) {
         final Map<String, List<String>> paramSources = new HashMap<>();
 
         final String queryString = header.getQueryString();

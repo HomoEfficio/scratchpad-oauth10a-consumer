@@ -1,4 +1,4 @@
-package io.homo.efficio.scratchpad.oauth10a.consumer.domain;
+package io.homo.efficio.scratchpad.oauth10a.consumer.domain.header;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Created on 2018-08-18.
  */
 @Data
-public abstract class AbstractOAuthRequestHeader {
+public abstract class AbstractOAuth10aRequestHeader {
 
     protected String httpMethod;
 
@@ -23,7 +23,7 @@ public abstract class AbstractOAuthRequestHeader {
 
     protected int serverPort;
 
-    protected String credentialsUrl;
+    protected String serverUrl;
 
     protected String queryString;
 
@@ -53,9 +53,9 @@ public abstract class AbstractOAuthRequestHeader {
     //   The parameter MAY be omitted when using the "PLAINTEXT" signature method.
     protected String oauthTimestamp;
 
-    protected String oauthVersion = OAuth10aConstants.VERSION_1_0;
+    protected String oauthVersion = OAuth10aConstants.OAUTH_VERSION_1_0;
 
-    public AbstractOAuthRequestHeader() {
+    public AbstractOAuth10aRequestHeader() {
     }
 
     protected String getRequestBody(HttpServletRequest request) {
