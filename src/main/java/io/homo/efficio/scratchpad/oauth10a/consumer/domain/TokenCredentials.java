@@ -2,6 +2,7 @@ package io.homo.efficio.scratchpad.oauth10a.consumer.domain;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import lombok.Data;
+import lombok.NonNull;
 
 /**
  * @author homo.efficio@gmail.com
@@ -14,19 +15,15 @@ public class TokenCredentials extends AbstractOAuth10aCredentials {
 
     private String oauth_token_secret;
 
-    @Override
-    public AbstractOAuth10aCredentials getCredentialsFrom(String responseBody) {
-        if (responseBody == null || responseBody.isEmpty()) return null;
-        final TokenCredentials o = new TokenCredentials();
+    public TokenCredentials(@NonNull String responseBody) {
         String[] elements = responseBody.split("&");
         for (String element : elements) {
             String[] kv = element.split("=");
             if (OAuth10aConstants.OAUTH_TOKEN.equals(kv[0].toLowerCase()))
-                o.setOauth_token(kv[1]);
+                this.setOauth_token(kv[1]);
             if (OAuth10aConstants.OAUTH_TOKEN_SECRET.equals(kv[0].toLowerCase()))
-                o.setOauth_token_secret(kv[1]);
+                this.setOauth_token_secret(kv[1]);
         }
-        return o;
     }
 
     @Override

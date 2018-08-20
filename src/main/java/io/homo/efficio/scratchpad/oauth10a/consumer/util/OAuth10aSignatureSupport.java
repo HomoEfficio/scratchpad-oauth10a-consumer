@@ -1,6 +1,5 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.util;
 
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.AbstractOAuth10aCredentials;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.AbstractOAuthRequestHeader;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,7 @@ import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlE
  * Created on 2018-08-18.
  */
 @Component
-public class OAuth10aSupport {
+public class OAuth10aSignatureSupport {
 
     public void fillNonce(AbstractOAuthRequestHeader header) {
         header.setOauthNonce(Base64.getEncoder()
@@ -125,7 +124,4 @@ public class OAuth10aSupport {
         return sb.toString().substring(1);
     }
 
-    public AbstractOAuth10aCredentials getCredentialsFrom(AbstractOAuth10aCredentials oAuthCredentials, String respnoseBody) {
-        return oAuthCredentials.getCredentialsFrom(respnoseBody);
-    }
 }

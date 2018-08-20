@@ -3,7 +3,7 @@ package io.homo.efficio.scratchpad.oauth10a.consumer.service;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.AbstractOAuth10aCredentials;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.AbstractOAuthRequestHeader;
 import io.homo.efficio.scratchpad.oauth10a.consumer.exception.OAuth10aException;
-import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aSupport;
+import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aSignatureSupport;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +34,11 @@ public class TwitterService {
     private RestTemplate restTemplate;
 
     @NonNull
-    private OAuth10aSupport oAuth10aSupport;
+    private OAuth10aSignatureSupport oAuth10ASignatureSupport;
 
     public <T extends AbstractOAuth10aCredentials> ResponseEntity<T> getCredentials(AbstractOAuthRequestHeader oAuthRequestHeader, Class<T> clazz) {
-        this.oAuth10aSupport.fillNonce(oAuthRequestHeader);
-        this.oAuth10aSupport.fillSignature(oAuthRequestHeader);
+        this.oAuth10ASignatureSupport.fillNonce(oAuthRequestHeader);
+        this.oAuth10ASignatureSupport.fillSignature(oAuthRequestHeader);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", oAuthRequestHeader.getRequestHeader());
         log.info("### {} request header: {}", clazz.getSimpleName(), oAuthRequestHeader.getRequestHeader());
@@ -53,9 +53,9 @@ public class TwitterService {
 
         if (response.getStatusCode().equals(HttpStatus.OK)) {
 
-            AbstractOAuth10aCredentials oAuthCredentials = null;
+            AbstractOAuth10aCredentials oAuthCredentials;
             try {
-                oAuthCredentials = clazz.getConstructor().newInstance();
+                oAuthCredentials = clazz.getConstructor(String.class).newInstance(response.getBody());
             } catch (InstantiationException e) {
                 throw new RuntimeException(e);
             } catch (IllegalAccessException e) {
@@ -66,9 +66,7 @@ public class TwitterService {
                 throw new RuntimeException(e);
             }
 
-            final T credentials =
-                    (T) this.oAuth10aSupport.getCredentialsFrom(oAuthCredentials, response.getBody());
-            return new ResponseEntity<>(credentials, HttpStatus.OK);
+            return new ResponseEntity<>((T) oAuthCredentials, HttpStatus.OK);
         } else {
             throw new OAuth10aException("Response from Server: " + response.getStatusCode() + " " + response.getBody());
         }

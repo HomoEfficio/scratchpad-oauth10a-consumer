@@ -12,5 +12,4 @@ public abstract class AbstractOAuth10aCredentials {
     // underscore name is needed to be bound automatically
     protected String oauth_token;
 
-    public abstract AbstractOAuth10aCredentials getCredentialsFrom(String responseBody);
 }

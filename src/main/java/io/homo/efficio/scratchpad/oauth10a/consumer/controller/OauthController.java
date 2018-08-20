@@ -58,13 +58,10 @@ public class OauthController {
 
     @PostMapping("/mentions")
     public String requestTemporaryCredentials(HttpServletRequest request, Mention mention) {
-//        final OAuthRequestHeader tcHeader =
-//                new OAuthRequestHeader(request, this.temporaryCredentialsUrl, this.consumerKey, this.consumerSecret, this.callbackUrl);
         final AbstractOAuthRequestHeader tcHeader =
                 new OAuth10aTemporaryCredentialsHeader(request, this.temporaryCredentialsUrl, this.consumerKey, this.consumerSecret, this.callbackUrl);
 
         final ResponseEntity<TemporaryCredentials> response =
-//                this.twitterService.getTemporaryCredentials(tcHeader);
                 this.twitterService.getCredentials(tcHeader, TemporaryCredentials.class);
         final TemporaryCredentials temporaryCredentials = response.getBody();
 
@@ -89,7 +86,6 @@ public class OauthController {
                 new OAuth10aTokenCredentialsHeader(request, this.tokenCredentialsUrl, this.consumerKey, this.consumerSecret,
                         verifierResponse.getOauth_token(), rts, verifierResponse.getOauth_verifier());
         final ResponseEntity<TokenCredentials> tokenCredentials =
-//                this.twitterService.getTokenCredentials(tcHeader);
                 this.twitterService.getCredentials(tcHeader, TokenCredentials.class);
 
         return tokenCredentials.getBody().toString();
