@@ -80,7 +80,8 @@ public class OauthController {
 
         HttpSession session = request.getSession();
         session.setAttribute(OAuth10aConstants.NEXT_ACTION,
-                new NextAction(HttpMethod.POST, postUrl + "?status=" + getUrlEncoded(mention.getMention()), ""));
+//                new NextAction(HttpMethod.POST, postUrl + "?status=" + getUrlEncoded(mention.getMention()), ""));
+                new NextAction(HttpMethod.POST, postUrl, "status=" + getUrlEncoded(mention.getMention())));
         // RequestTokenSecret is better be stored in cache like Redis
         // If it is to be stored in the session, it needs to be encrypted
         session.setAttribute("RTS", temporaryCredentials.getOauth_token_secret());

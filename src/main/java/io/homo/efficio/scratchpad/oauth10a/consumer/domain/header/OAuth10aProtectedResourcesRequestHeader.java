@@ -52,12 +52,12 @@ public class OAuth10aProtectedResourcesRequestHeader extends AbstractOAuth10aReq
         final StringBuilder sb = new StringBuilder();
         sb.append("OAuth ")
                 .append(OAuth10aConstants.OAUTH_CONSUMER_KEY).append("=\"").append(this.oauthConsumerKey).append("\", ")
-                .append(OAuth10aConstants.OAUTH_TOKEN).append("=\"").append(this.oauthToken).append("\", ")
+                .append(OAuth10aConstants.OAUTH_NONCE).append("=\"").append(this.oauthNonce).append("\", ")
+                .append(OAuth10aConstants.OAUTH_SIGNATURE).append("=\"").append(getUrlEncoded(this.oauthSignature)).append("\", ")
                 .append(OAuth10aConstants.OAUTH_SIGNATURE_METHOD).append("=\"").append(this.oauthSignatureMethod).append("\", ")
                 .append(OAuth10aConstants.OAUTH_TIMESTAMP).append("=\"").append(this.oauthTimestamp).append("\", ")
-                .append(OAuth10aConstants.OAUTH_NONCE).append("=\"").append(this.oauthNonce).append("\", ")
-                .append(OAuth10aConstants.OAUTH_VERSION).append("=\"").append(this.oauthVersion).append("\", ")
-                .append(OAuth10aConstants.OAUTH_SIGNATURE).append("=\"").append(getUrlEncoded(this.oauthSignature)).append("\"");
+                .append(OAuth10aConstants.OAUTH_TOKEN).append("=\"").append(this.oauthToken).append("\", ")
+                .append(OAuth10aConstants.OAUTH_VERSION).append("=\"").append(this.oauthVersion).append("\"");
         return sb.toString();
     }
 

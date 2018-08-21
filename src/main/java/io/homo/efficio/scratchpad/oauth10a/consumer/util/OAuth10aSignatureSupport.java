@@ -74,6 +74,7 @@ public class OAuth10aSignatureSupport {
      */
     private String getBaseStringUri(AbstractOAuth10aRequestHeader header) {
         final String serverUrl = header.getServerUrl();
+        // TODO http 일 때 :80/ 포함되어 있으면 제외, https 일 떄 :443 포함되어 있으면 제외
         final int qIndex = serverUrl.indexOf('?');
         return qIndex > 0 ? serverUrl.substring(0, qIndex) : serverUrl;
     }
