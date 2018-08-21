@@ -1,8 +1,8 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.service;
 
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.NextAction;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.credentials.AbstractOAuth10aCredentials;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.AbstractOAuth10aRequestHeader;
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.NextAction;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.OAuth10aProtectedResourcesRequestHeader;
 import io.homo.efficio.scratchpad.oauth10a.consumer.exception.OAuth10aException;
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
@@ -18,7 +18,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 
 /**
  * @author homo.efficio@gmail.com
@@ -77,18 +76,27 @@ public class TwitterService {
         }
     }
 
+    /**
+     * @see <a href="https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/post-statuses-update">Twitter API Doc</a>
+     * @param header
+     * @param action
+     * @return
+     */
     public ResponseEntity<Object> doNextAction(OAuth10aProtectedResourcesRequestHeader header, NextAction action) {
         this.oAuth10ASignatureSupport.fillNonce(header);
         this.oAuth10ASignatureSupport.fillSignature(header);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(OAuth10aConstants.AUTHORIZATION, header.getRequestHeader());
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, header.getContentType());
         log.info("### Protected resources request header: {}", header.getRequestHeader());
 
         final RequestEntity<String> requestEntity =
                 new RequestEntity<>(
                         action.getRequestBody(),
+                        httpHeaders,
                         action.getHttpMethod(),
                         action.getUri());
+
         ResponseEntity<Object> response = null;
         try {
             response = this.restTemplate.exchange(requestEntity, Object.class);

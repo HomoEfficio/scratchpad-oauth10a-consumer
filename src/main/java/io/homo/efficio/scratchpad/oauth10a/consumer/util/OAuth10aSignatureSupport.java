@@ -20,11 +20,19 @@ import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlE
 @Component
 public class OAuth10aSignatureSupport {
 
+    /**
+     * @see <a href="https://tools.ietf.org/html/rfc5849#section-3.3">Spec 3.3. Nonce and Timestamp</a>
+     * @param header
+     */
     public void fillNonce(AbstractOAuth10aRequestHeader header) {
         header.setOauthNonce(Base64.getEncoder()
                 .encodeToString(String.valueOf(UUID.randomUUID()).getBytes()));
     }
 
+    /**
+     * @see <a href="https://tools.ietf.org/html/rfc5849#section-3.3">Spec 3.4. Signature</a>
+     * @param header
+     */
     public void fillSignature(AbstractOAuth10aRequestHeader header) {
         String key = header.getKey();
         String baseString = generateBaseString(header);
@@ -41,6 +49,11 @@ public class OAuth10aSignatureSupport {
         }
     }
 
+    /**
+     * @see <a href="https://tools.ietf.org/html/rfc5849#section-3.4.1">Spec 3.4.1. Signature Base String</a>
+     * @param header
+     * @return
+     */
     private String generateBaseString(AbstractOAuth10aRequestHeader header) {
         String httpMethod = header.getHttpMethod();
         String baseUri = getBaseStringUri(header);
@@ -54,16 +67,31 @@ public class OAuth10aSignatureSupport {
         return sb.toString();
     }
 
+    /**
+     * @see <a href="https://tools.ietf.org/html/rfc5849#section-3.4.1.2">Spec 3.4.1.2. Base String URI</a>
+     * @param header
+     * @return
+     */
     private String getBaseStringUri(AbstractOAuth10aRequestHeader header) {
         final String serverUrl = header.getServerUrl();
         final int qIndex = serverUrl.indexOf('?');
         return qIndex > 0 ? serverUrl.substring(0, qIndex) : serverUrl;
     }
 
+    /**
+     * @see <a href="https://tools.ietf.org/html/rfc5849#section-3.4.1.3">Spec 3.4.1.3. Request Parameters</a>
+     * @param header
+     * @return
+     */
     private String getRequestParameters(AbstractOAuth10aRequestHeader header) {
         return getNormalizedParameters(getParameterSources(header));
     }
 
+    /**
+     * @see <a href="https://tools.ietf.org/html/rfc5849#section-3.4.1.3.1">Spec 3.4.1.3.1. Parameter Sources</a>
+     * @param header
+     * @return
+     */
     private Map<String, List<String>> getParameterSources(AbstractOAuth10aRequestHeader header) {
         final Map<String, List<String>> paramSources = new HashMap<>();
 
@@ -82,9 +110,9 @@ public class OAuth10aSignatureSupport {
         return paramSources;
     }
 
-    private void kvToMultiValueMap(Map<String, List<String>> paramSources, String queryString) {
-        if (queryString != null && !queryString.isEmpty()) {
-            String[] params = queryString.split("&");
+    private void kvToMultiValueMap(Map<String, List<String>> paramSources, String kvPairs) {
+        if (kvPairs != null && !kvPairs.isEmpty()) {
+            String[] params = kvPairs.split("&");
             for (String param : params) {
                 String[] kv = param.split("=");
                 String key = getUrlDecoded(kv[0]);
@@ -104,6 +132,11 @@ public class OAuth10aSignatureSupport {
         }
     }
 
+    /**
+     * @see <a href="https://tools.ietf.org/html/rfc5849#section-3.4.1.3.2">Spec 3.4.1.3.2. Parameters Normalization</a>
+     * @param parameterSources
+     * @return
+     */
     private String getNormalizedParameters(Map<String, List<String>> parameterSources) {
         SortedMap<String, List<String>> normalizedParametersMap = new TreeMap<>();
         final Set<Map.Entry<String, List<String>>> entries = parameterSources.entrySet();

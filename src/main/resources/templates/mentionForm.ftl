@@ -17,7 +17,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="initFocus()">
 <div class="pure-g">
     <form class="pure-form pure-form-stacked" action="/oauth/mentions" method="post">
         <div class="pure-u-1">
@@ -33,5 +33,10 @@
         </div>
     </form>
 </div>
+<script>
+function initFocus() {
+    document.getElementById('mention').focus();
+}
+</script>
 </body>
 </html>

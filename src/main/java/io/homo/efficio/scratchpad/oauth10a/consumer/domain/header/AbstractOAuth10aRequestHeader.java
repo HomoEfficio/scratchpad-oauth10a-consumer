@@ -2,10 +2,14 @@ package io.homo.efficio.scratchpad.oauth10a.consumer.domain.header;
 
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import lombok.Data;
+import org.springframework.http.MediaType;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -55,21 +59,38 @@ public abstract class AbstractOAuth10aRequestHeader {
 
     protected String oauthVersion = OAuth10aConstants.OAUTH_VERSION_1_0;
 
+    protected boolean isMultipart;
+
     public AbstractOAuth10aRequestHeader() {
     }
 
+    /**
+     * Spec 3.4.1.3.1 entity-body of Parameter Sources
+     * @param request
+     * @return
+     */
     protected String getRequestBody(HttpServletRequest request) {
         try {
-            final BufferedReader reader = request.getReader();
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            return sb.toString();
+            final Collection<Part> parts = request.getParts();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (ServletException e) {
+            // extract entity-body only when request is not multipart/form-data
+            if (!MediaType.APPLICATION_FORM_URLENCODED_VALUE.equals(request.getContentType())) {
+                try {
+                    final BufferedReader reader = request.getReader();
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    return sb.toString();
+                } catch (IOException ioe) {
+                    throw new RuntimeException(ioe);
+                }
+            }
         }
+        return null;
     }
 
     public abstract String getRequestHeader();
