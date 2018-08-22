@@ -80,8 +80,8 @@ public class OauthController {
 
         HttpSession session = request.getSession();
         session.setAttribute(OAuth10aConstants.NEXT_ACTION,
-//                new NextAction(HttpMethod.POST, postUrl + "?status=" + getUrlEncoded(mention.getMention()), ""));
-                new NextAction(HttpMethod.POST, postUrl, "status=" + getUrlEncoded(mention.getMention())));
+                new NextAction(HttpMethod.POST, postUrl + "?status=" + getUrlEncoded(mention.getMention()), null));
+//                new NextAction(HttpMethod.POST, postUrl, "status=" + getUrlEncoded(mention.getMention())));
         // RequestTokenSecret is better be stored in cache like Redis
         // If it is to be stored in the session, it needs to be encrypted
         session.setAttribute("RTS", temporaryCredentials.getOauth_token_secret());
@@ -115,14 +115,7 @@ public class OauthController {
         final URI nextUri = nextAction.getUri();
         final OAuth10aProtectedResourcesRequestHeader resourcesRequestHeader =
                 new OAuth10aProtectedResourcesRequestHeader(
-                        nextUri.getScheme(),
-                        nextUri.getHost(),
-                        nextUri.getPort() == -1 ? 80 : nextUri.getPort(),
-//                        nextUri.getQuery(),  // uri.getQuery()는 decoding한 문자열을 반환하므로 사용하면 안됨
-                        nextAction.getUrl().substring(nextAction.getUrl().indexOf('?') + 1),
-                        "application/json",
-                        nextAction.getRequestBody(),
-                        nextAction.getUrl(),
+                        nextAction,
                         this.consumerKey,
                         this.consumerSecret,
                         responseEntity.getBody().getOauth_token(),
