@@ -21,8 +21,7 @@ public class OAuth10aTemporaryCredentialRequestHeader extends AbstractOAuth10aRe
 
     private String oauthVersion = OAuth10aConstants.OAUTH_VERSION_1_0;
 
-    public OAuth10aTemporaryCredentialRequestHeader(
-                                                    String serverUrl,
+    public OAuth10aTemporaryCredentialRequestHeader(String serverUrl,
                                                     String oauthConsumerKey,
                                                     String oauthConsumerSecret,
                                                     String oauthCallbackUrl) {
@@ -31,7 +30,9 @@ public class OAuth10aTemporaryCredentialRequestHeader extends AbstractOAuth10aRe
         this.serverUrl = serverUrl;
         this.scheme = uri.getScheme();
         this.serverName = uri.getHost();
-        this.serverPort = uri.getPort();
+        this.serverPort = uri.getPort() == -1
+                ? ("http".equals(this.scheme) ? 80 : "https".equals(this.scheme) ? 443 : -1)
+                : uri.getPort();
         this.queryString = uri.getQuery();
         this.contentType = null;  // no need for temporary credentials
         this.requestBody = null;  // no need for temporary credentials

@@ -105,7 +105,6 @@ public class OauthController {
         final String rts = (String) session.getAttribute("RTS");
         final AbstractOAuth10aRequestHeader tcHeader =
                 new OAuth10aTokenCredentialsRequestHeader(
-                        request,
                         this.tokenCredentialsUrl,
                         this.consumerKey,
                         this.consumerSecret,

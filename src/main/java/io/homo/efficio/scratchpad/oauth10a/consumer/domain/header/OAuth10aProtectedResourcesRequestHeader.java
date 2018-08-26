@@ -24,7 +24,11 @@ public class OAuth10aProtectedResourcesRequestHeader extends AbstractOAuth10aReq
     private String oauthTokenSecret;
 
 
-    public OAuth10aProtectedResourcesRequestHeader(NextAction nextAction, String consumerKey, String consumerSecret, String oauth_token, String oauth_token_secret) {
+    public OAuth10aProtectedResourcesRequestHeader(NextAction nextAction,
+                                                   String consumerKey,
+                                                   String consumerSecret,
+                                                   String oauth_token,
+                                                   String oauth_token_secret) {
         URI nextUri = nextAction.getUri();
         this.httpMethod = HttpMethod.POST.toString();
         this.scheme = nextUri.getScheme();

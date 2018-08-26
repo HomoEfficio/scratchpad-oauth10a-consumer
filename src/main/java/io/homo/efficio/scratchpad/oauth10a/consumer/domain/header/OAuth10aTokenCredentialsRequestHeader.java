@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,20 +24,22 @@ public class OAuth10aTokenCredentialsRequestHeader extends AbstractOAuth10aReque
 
     private String oauthTokenSecret;
 
-    public OAuth10aTokenCredentialsRequestHeader(HttpServletRequest request,
-                                                 String serverUrl,
+    public OAuth10aTokenCredentialsRequestHeader(String serverUrl,
                                                  String oauthConsumerKey,
                                                  String oauthConsumerSecret,
                                                  String oauthToken,
                                                  String oauthTokenSecret,
                                                  String oauthVerifier) {
         this.httpMethod = HttpMethod.POST.toString();
-        this.scheme = request.getScheme();
-        this.serverName = request.getServerName();
-        this.serverPort = request.getServerPort();
-        this.queryString = request.getQueryString();
-        this.contentType = request.getContentType();
-        this.requestBody = getRequestBody(request);
+        URI uri = URI.create(serverUrl);
+        this.scheme = uri.getScheme();
+        this.serverName = uri.getHost();
+        this.serverPort = uri.getPort() == -1
+                ? ("http".equals(this.scheme) ? 80 : "https".equals(this.scheme) ? 443 : -1)
+                : uri.getPort();
+        this.queryString = uri.getQuery();
+        this.contentType = null;  // no need for temporary credentials
+        this.requestBody = null;  // no need for temporary credentials
         this.serverUrl = serverUrl;
         this.oauthConsumerKey = oauthConsumerKey;
         this.oauthConsumerSecret = oauthConsumerSecret;
