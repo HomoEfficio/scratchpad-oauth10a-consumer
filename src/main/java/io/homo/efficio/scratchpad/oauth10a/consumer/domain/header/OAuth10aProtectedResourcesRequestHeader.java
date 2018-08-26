@@ -71,6 +71,7 @@ public class OAuth10aProtectedResourcesRequestHeader extends AbstractOAuth10aReq
 
         headerMap.put(OAuth10aConstants.OAUTH_CONSUMER_KEY, this.getOauthConsumerKey());
         headerMap.put(OAuth10aConstants.OAUTH_SIGNATURE_METHOD, this.getOauthSignatureMethod());
+        headerMap.put(OAuth10aConstants.OAUTH_TOKEN, this.getOauthToken());
         headerMap.put(OAuth10aConstants.OAUTH_TIMESTAMP, this.getOauthTimestamp());
         headerMap.put(OAuth10aConstants.OAUTH_NONCE, this.getOauthNonce());
         headerMap.put(OAuth10aConstants.OAUTH_VERSION, this.getOauthVersion());
