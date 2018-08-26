@@ -23,9 +23,9 @@ public class OAuth10aSignatureSupportTest {
         // given
         OAuth10aTemporaryCredentialRequestHeader header = new OAuth10aTemporaryCredentialRequestHeader(
                 "https://api.twitter.com/oauth/request_token",
-                "8Y3anpLDzrFEY8a3bHL7NNugL",
-                "HoGAE6K7QuV9dJ6WhWhSSziUnXv12GyF78uZEr0g4YKt1WEIV7",
-                "http://twitter-app.homoefficio.io:8080/oauth/callback"
+                "YourAppConsumerKey",
+                "YourAppConsumerSecret",
+                "YourAppCallbackURL"
         );
         header.setOauthNonce("NDg0ZDNjOTktYTJlMC00YmI5LThhMDktZDBkZGQ0MDA0ZTIw");
         header.setOauthTimestamp("1535288634");
@@ -36,7 +36,7 @@ public class OAuth10aSignatureSupportTest {
 
 
         // then
-        assertThat(header.getOauthSignature()).isEqualTo("Gm70xu93zofoeWKoZwDqBxEFNEg=");
+        assertThat(header.getOauthSignature()).isEqualTo("DNpRbry9XwYfEf+KXz4tV5Ufbpk=");
     }
 
     @Test
@@ -44,11 +44,11 @@ public class OAuth10aSignatureSupportTest {
         // given
         OAuth10aTokenCredentialsRequestHeader header = new OAuth10aTokenCredentialsRequestHeader(
                 "https://api.twitter.com/oauth/access_token",
-                "8Y3anpLDzrFEY8a3bHL7NNugL",
-                "HoGAE6K7QuV9dJ6WhWhSSziUnXv12GyF78uZEr0g4YKt1WEIV7",
-                "BxAB4QAAAAAA8Gc3AAABZXZb5kE",
-                "YHitp4Iglj1vzxjfqFei5ynn0kWNdurX",
-                "Ea7inhOCV5aMm83fwEvepbT6QfuFwDZ9"
+                "YourAppConsumerKey",
+                "YourAppConsumerSecret",
+                "YourRequestToken",
+                "YourRequestTokenSecret",
+                "YourOAuthVerifier"
         );
         header.setOauthNonce("ZmRmNDQ5Y2YtN2IwNC00YzFkLTgxODItN2YwZmEzYjRhZTJj");
         header.setOauthTimestamp("1535289096");
@@ -59,7 +59,7 @@ public class OAuth10aSignatureSupportTest {
 
 
         // then
-        assertThat(header.getOauthSignature()).isEqualTo("aawDX/Lzz5TwLwOHHZy5Q2w2nIw=");
+        assertThat(header.getOauthSignature()).isEqualTo("64lbyOhFJRcmudwWSwrmL1cQhEQ=");
     }
 
     @Test
@@ -67,17 +67,17 @@ public class OAuth10aSignatureSupportTest {
         // given
         NextAction nextAction = new NextAction(
                 HttpMethod.POST,
-                "https://api.twitter.com/1.1/statuses/update.json?status=Java%20URIEncoder%20sucks",
+                "https://api.twitter.com/1.1/statuses/update.json?status=OAuth10a%20Test",
                 null
         );
 
         OAuth10aProtectedResourcesRequestHeader header =
                 new OAuth10aProtectedResourcesRequestHeader(
                         nextAction,
-                        "8Y3anpLDzrFEY8a3bHL7NNugL",
-                        "HoGAE6K7QuV9dJ6WhWhSSziUnXv12GyF78uZEr0g4YKt1WEIV7",
-                        "935307669082009600-W3Hyf5xFYiyGF9P9zmaDGUlFatglZPX",
-                        "2XBO7aGEHF5ZtruyNa6yRgA0nk42HNmL94ZHhfXgkcooR"
+                        "YourAppConsumerKey",
+                        "YourAppConsumerSecret",
+                        "YourAccessToken",
+                        "YourAccessTokenSecret"
                 );
         header.setOauthTimestamp("1535272771");
         header.setOauthNonce("Y2I0Yjk4ZDItZjg2OS00Y2VjLThkMjgtY2RmMWY0YzZiOTlj");
@@ -88,6 +88,6 @@ public class OAuth10aSignatureSupportTest {
 
 
         // then
-        assertThat(header.getOauthSignature()).isEqualTo("BsaZS0ryUutG9rQ6ULHOOs1pI/0=");
+        assertThat(header.getOauthSignature()).isEqualTo("de5B57uqqbMG/Z/6vm5i5kJaxxA=");
     }
 }
