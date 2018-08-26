@@ -1,9 +1,14 @@
 package io.homo.efficio.scratchpad.oauth10a.consumer.controller;
 
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.*;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.Mention;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.NextAction;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.VerifierResponse;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.credentials.TemporaryCredentials;
 import io.homo.efficio.scratchpad.oauth10a.consumer.domain.credentials.TokenCredentials;
-import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.*;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.AbstractOAuth10aRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.OAuth10aProtectedResourcesRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.OAuth10aTemporaryCredentialRequestHeader;
+import io.homo.efficio.scratchpad.oauth10a.consumer.domain.header.OAuth10aTokenCredentialsRequestHeader;
 import io.homo.efficio.scratchpad.oauth10a.consumer.service.TwitterService;
 import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import lombok.NonNull;
@@ -23,7 +28,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.net.URI;
 import java.util.Objects;
 
@@ -72,7 +76,7 @@ public class OauthController {
     @PostMapping("/mentions")
     public String requestTemporaryCredentials(HttpServletRequest request, Mention mention) {
         final AbstractOAuth10aRequestHeader tcHeader =
-                new OAuth10aTemporaryCredentialRequestHeader(request, this.temporaryCredentialsUrl, this.consumerKey, this.consumerSecret, this.callbackUrl);
+                new OAuth10aTemporaryCredentialRequestHeader(this.temporaryCredentialsUrl, this.consumerKey, this.consumerSecret, this.callbackUrl);
 
         final ResponseEntity<TemporaryCredentials> response =
                 this.twitterService.getCredentials(tcHeader, TemporaryCredentials.class);
@@ -114,6 +118,7 @@ public class OauthController {
         log.info("access_token: {}", Objects.requireNonNull(responseEntity.getBody()).toString());
 
         final NextAction nextAction = (NextAction) session.getAttribute(OAuth10aConstants.NEXT_ACTION);
+        log.info("nextAction: {}", nextAction);
         final URI nextUri = nextAction.getUri();
         final OAuth10aProtectedResourcesRequestHeader resourcesRequestHeader =
                 new OAuth10aProtectedResourcesRequestHeader(
@@ -122,6 +127,7 @@ public class OauthController {
                         this.consumerSecret,
                         responseEntity.getBody().getOauth_token(),
                         responseEntity.getBody().getOauth_token_secret());
+        log.info("OAuth10aProtectedResourcesRequestHeader: {}", resourcesRequestHeader);
         final ResponseEntity<Object> actionResponseEntity =
                 this.twitterService.doNextAction(resourcesRequestHeader, nextAction);
 

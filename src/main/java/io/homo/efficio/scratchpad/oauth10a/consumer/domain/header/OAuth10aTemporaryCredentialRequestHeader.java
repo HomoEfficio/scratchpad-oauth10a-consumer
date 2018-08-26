@@ -4,7 +4,7 @@ import io.homo.efficio.scratchpad.oauth10a.consumer.util.OAuth10aConstants;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
-import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,19 +21,20 @@ public class OAuth10aTemporaryCredentialRequestHeader extends AbstractOAuth10aRe
 
     private String oauthVersion = OAuth10aConstants.OAUTH_VERSION_1_0;
 
-    public OAuth10aTemporaryCredentialRequestHeader(HttpServletRequest request,
+    public OAuth10aTemporaryCredentialRequestHeader(
                                                     String serverUrl,
                                                     String oauthConsumerKey,
                                                     String oauthConsumerSecret,
                                                     String oauthCallbackUrl) {
+        URI uri = URI.create(serverUrl);
         this.httpMethod = HttpMethod.POST.toString();
-        this.scheme = request.getScheme();
-        this.serverName = request.getServerName();
-        this.serverPort = request.getServerPort();
-        this.queryString = request.getQueryString();
-        this.contentType = request.getContentType();
-        this.requestBody = getRequestBody(request);
         this.serverUrl = serverUrl;
+        this.scheme = uri.getScheme();
+        this.serverName = uri.getHost();
+        this.serverPort = uri.getPort();
+        this.queryString = uri.getQuery();
+        this.contentType = null;  // no need for temporary credentials
+        this.requestBody = null;  // no need for temporary credentials
         this.oauthConsumerKey = oauthConsumerKey;
         this.oauthConsumerSecret = oauthConsumerSecret;
         this.oauthCallbackUrl = oauthCallbackUrl;
