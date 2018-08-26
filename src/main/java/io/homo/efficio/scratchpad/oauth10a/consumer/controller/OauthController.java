@@ -102,14 +102,14 @@ public class OauthController {
         HttpSession session = request.getSession();
         // RequestTokenSecret is better be fetched from cache like Redis
         // If it is to be read from the session, it needs to be decrypted
-        final String rts = (String) session.getAttribute("RTS");
+        final String requestTokenSecret = (String) session.getAttribute("RTS");
         final AbstractOAuth10aRequestHeader tcHeader =
                 new OAuth10aTokenCredentialsRequestHeader(
                         this.tokenCredentialsUrl,
                         this.consumerKey,
                         this.consumerSecret,
                         verifierResponse.getOauth_token(),
-                        rts,
+                        requestTokenSecret,
                         verifierResponse.getOauth_verifier());
         final ResponseEntity<TokenCredentials> responseEntity =
                 this.twitterService.getCredentials(tcHeader, TokenCredentials.class);
