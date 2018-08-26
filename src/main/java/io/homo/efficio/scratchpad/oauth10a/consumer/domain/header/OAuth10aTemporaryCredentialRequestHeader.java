@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlEncoded;
+import static io.homo.efficio.scratchpad.oauth10a.consumer.util.EncodingUtils.getPercentEncoded;
 
 /**
  * @author homo.efficio@gmail.com
@@ -48,14 +48,14 @@ public class OAuth10aTemporaryCredentialRequestHeader extends AbstractOAuth10aRe
                 .append(OAuth10aConstants.OAUTH_TIMESTAMP).append("=\"").append(this.oauthTimestamp).append("\", ")
                 .append(OAuth10aConstants.OAUTH_NONCE).append("=\"").append(this.oauthNonce).append("\", ")
                 .append(OAuth10aConstants.OAUTH_VERSION).append("=\"").append(this.oauthVersion).append("\", ")
-                .append(OAuth10aConstants.OAUTH_CALLBACK).append("=\"").append(getUrlEncoded(this.oauthCallbackUrl)).append("\", ")
-                .append(OAuth10aConstants.OAUTH_SIGNATURE).append("=\"").append(getUrlEncoded(this.oauthSignature)).append("\"");
+                .append(OAuth10aConstants.OAUTH_CALLBACK).append("=\"").append(getPercentEncoded(this.oauthCallbackUrl)).append("\", ")
+                .append(OAuth10aConstants.OAUTH_SIGNATURE).append("=\"").append(getPercentEncoded(this.oauthSignature)).append("\"");
         return sb.toString();
     }
 
     @Override
     public String getKey() {
-        return getUrlEncoded(this.getOauthConsumerSecret()) + "&";
+        return getPercentEncoded(this.getOauthConsumerSecret()) + "&";
     }
 
     @Override

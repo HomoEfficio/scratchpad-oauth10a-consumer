@@ -10,8 +10,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlDecoded;
-import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlEncoded;
+import static io.homo.efficio.scratchpad.oauth10a.consumer.util.EncodingUtils.getPercentDecoded;
+import static io.homo.efficio.scratchpad.oauth10a.consumer.util.EncodingUtils.getPercentEncoded;
 
 /**
  * @author homo.efficio@gmail.com
@@ -61,8 +61,8 @@ public class OAuth10aSignatureSupport {
 
         final StringBuilder sb = new StringBuilder();
         sb.append(httpMethod)
-                .append('&').append(getUrlEncoded(baseUri))
-                .append('&').append(getUrlEncoded(requestParameters));
+                .append('&').append(getPercentEncoded(baseUri))
+                .append('&').append(getPercentEncoded(requestParameters));
 
         return sb.toString();
     }
@@ -115,8 +115,8 @@ public class OAuth10aSignatureSupport {
             String[] params = kvPairs.split("&");
             for (String param : params) {
                 String[] kv = param.split("=");
-                String key = getUrlDecoded(kv[0]);
-                String value = kv.length == 2 ? getUrlDecoded(kv[1]) : "";
+                String key = getPercentDecoded(kv[0]);
+                String value = kv.length == 2 ? getPercentDecoded(kv[1]) : "";
                 putMultiValue(paramSources, key, value);
             }
         }
@@ -142,9 +142,9 @@ public class OAuth10aSignatureSupport {
         final Set<Map.Entry<String, List<String>>> entries = parameterSources.entrySet();
         for (Map.Entry<String, List<String>> entry: entries) {
             for (String value: entry.getValue()) {
-                putMultiValue(normalizedParametersMap, getUrlEncoded(entry.getKey()), getUrlEncoded(value));
+                putMultiValue(normalizedParametersMap, getPercentEncoded(entry.getKey()), getPercentEncoded(value));
             }
-            List<String> values = normalizedParametersMap.get(getUrlEncoded(entry.getKey()));
+            List<String> values = normalizedParametersMap.get(getPercentEncoded(entry.getKey()));
             Collections.sort(values);
         }
 

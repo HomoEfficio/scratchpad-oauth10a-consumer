@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlEncoded;
+import static io.homo.efficio.scratchpad.oauth10a.consumer.util.EncodingUtils.getPercentEncoded;
 
 /**
  * @author homo.efficio@gmail.com
@@ -52,7 +52,7 @@ public class OAuth10aProtectedResourcesRequestHeader extends AbstractOAuth10aReq
         sb.append("OAuth ")
                 .append(OAuth10aConstants.OAUTH_CONSUMER_KEY).append("=\"").append(this.oauthConsumerKey).append("\", ")
                 .append(OAuth10aConstants.OAUTH_NONCE).append("=\"").append(this.oauthNonce).append("\", ")
-                .append(OAuth10aConstants.OAUTH_SIGNATURE).append("=\"").append(getUrlEncoded(this.oauthSignature)).append("\", ")
+                .append(OAuth10aConstants.OAUTH_SIGNATURE).append("=\"").append(getPercentEncoded(this.oauthSignature)).append("\", ")
                 .append(OAuth10aConstants.OAUTH_SIGNATURE_METHOD).append("=\"").append(this.oauthSignatureMethod).append("\", ")
                 .append(OAuth10aConstants.OAUTH_TIMESTAMP).append("=\"").append(this.oauthTimestamp).append("\", ")
                 .append(OAuth10aConstants.OAUTH_TOKEN).append("=\"").append(this.oauthToken).append("\", ")
@@ -62,7 +62,7 @@ public class OAuth10aProtectedResourcesRequestHeader extends AbstractOAuth10aReq
 
     @Override
     public String getKey() {
-        return getUrlEncoded(this.getOauthConsumerSecret()) + "&" + getUrlEncoded(this.getOauthTokenSecret());
+        return getPercentEncoded(this.getOauthConsumerSecret()) + "&" + getPercentEncoded(this.getOauthTokenSecret());
     }
 
     @Override

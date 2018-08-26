@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.Objects;
 
-import static io.homo.efficio.scratchpad.oauth10a.consumer.util.URLUtils.getUrlEncoded;
+import static io.homo.efficio.scratchpad.oauth10a.consumer.util.EncodingUtils.getPercentEncoded;
 
 /**
  * @author homo.efficio@gmail.com
@@ -80,8 +80,10 @@ public class OauthController {
 
         HttpSession session = request.getSession();
         session.setAttribute(OAuth10aConstants.NEXT_ACTION,
-                new NextAction(HttpMethod.POST, postUrl + "?status=" + getUrlEncoded(mention.getMention()), null));
-//                new NextAction(HttpMethod.POST, postUrl, "status=" + getUrlEncoded(mention.getMention())));
+                // https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/post-statuses-update
+                // 에 따라 POST로 보내더라도 mention 내용을 queryString으로 붙여보내야만 정상 동작함
+                new NextAction(HttpMethod.POST, postUrl + "?status=" + getPercentEncoded(mention.getMention()), null));
+//                new NextAction(HttpMethod.POST, postUrl, "status=" + getPercentEncoded(mention.getMention())));
         // RequestTokenSecret is better be stored in cache like Redis
         // If it is to be stored in the session, it needs to be encrypted
         session.setAttribute("RTS", temporaryCredentials.getOauth_token_secret());
